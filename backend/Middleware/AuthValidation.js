@@ -13,7 +13,7 @@ const validateSignup = (req, res, next) => {
     if (error) {
         return res.status(400).json({
             success: false,
-            error: error.details[0].message
+            message: error.details[0].message
         });
     }
 
@@ -22,16 +22,7 @@ const validateSignup = (req, res, next) => {
 
 const validateLogin = (req, res, next) => {
     const schema = Joi.object({
-        login: Joi.string().trim().required().custom((value, helpers) => {
-            const isEmail = Joi.string().email().validate(value).error === undefined;
-            const isUsername = Joi.string().min(3).max(15).validate(value).error === undefined;
-
-            if (!isEmail && !isUsername) {
-                return helpers.error('any.invalid');
-            }
-
-            return value;
-        }),
+        identifier: Joi.string().trim().required(),
         password: Joi.string().min(4).max(15).required()
     });
 
@@ -40,7 +31,7 @@ const validateLogin = (req, res, next) => {
     if (error) {
         return res.status(400).json({
             success: false,
-            error: error.details[0].message
+            message: error.details[0].message
         });
     }
 

@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { handleError, handleSuccess } from '../utils';
 
-function Login() {
+function Login({ setIsLoggedIn }) {
   const [loginInfo, setLoginInfo] = useState({
     identifier: '',
     password: ''
@@ -26,43 +27,45 @@ function Login() {
     const { identifier, password } = loginInfo;
 
     if (!identifier || !password) {
-      return handleError("Please fill all fields");
+      return handleError('Please fill all fields');
     }
 
     try {
-      const url = "http://localhost:8080/auth/login";
-
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(loginInfo)
-      });
+      const response = await fetch(
+        'http://localhost:8080/auth/login',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(loginInfo)
+        }
+      );
 
       const result = await response.json();
 
       const { success, message, jwtToken, name, error } = result;
 
-      if (success) {
-        handleSuccess(message);
+      if (success && jwtToken) {
+        localStorage.setItem('token', jwtToken);
+        localStorage.setItem('loggedInUser', name);
 
-        localStorage.setItem("token", jwtToken);
-        localStorage.setItem("loggedInUser", name);
+        setIsLoggedIn(true);
+
+        handleSuccess(message || 'Login successful');
 
         setTimeout(() => {
-          navigate('/home');
-        }, 3000);
+          navigate('/home', { replace: true });
+        }, 1000);
 
       } else {
         const details = error?.details?.[0]?.message;
-        handleError(details || message || "Login failed");
+
+        handleError(details || message || 'Login failed');
       }
 
-      console.log(result);
-
     } catch (error) {
-      handleError("Login failed. Please try again.");
+      handleError('Login failed. Please try again.');
     }
   };
 
