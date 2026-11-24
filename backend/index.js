@@ -1,20 +1,32 @@
+
 const express = require('express');
-const app = express();
 const cors = require('cors');
+const connectDB = require('./Models/db');
 
 require('dotenv').config();
-require('./Models/db');
 
-const authRouter = require('./Routes/AuthRouter.js');
-const productRouter = require('./Routes/ProductRouter.js');
-
-const PORT = process.env.PORT || 8080;
+const app = express();
 
 app.use(express.json());
 app.use(cors());
 
-console.log("AuthRouter:", typeof authRouter);
-console.log("ProductRouter:", typeof productRouter);
+// Connect to MongoDB before handling database requests
+app.use(['/auth', '/products'], async (req, res, next) => {
+    try {
+        await connectDB();
+        next();
+    } catch (error) {
+        console.error('Database connection error:', error.message);
+
+        return res.status(503).json({
+            success: false,
+            message: 'Database unavailable. Please try again later.'
+        });
+    }
+});
+
+const authRouter = require('./Routes/AuthRouter.js');
+const productRouter = require('./Routes/ProductRouter.js');
 
 app.use('/auth', authRouter);
 app.use('/products', productRouter);
@@ -23,12 +35,14 @@ app.get('/ping', (req, res) => {
     res.send('pong');
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-    console.log(`http://localhost:${PORT}`);
-});
+// Vercel serverless export
+module.exports = app;
 
-console.log(
-  "MONGO_CONN exists:",
-  Boolean(process.env.MONGO_CONN)
-);
+// Local development
+if (require.main === module) {
+    const PORT = process.env.PORT || 8080;
+
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+    });
+}
