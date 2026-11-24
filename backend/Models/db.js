@@ -12,12 +12,16 @@ const connectDB = async () => {
             throw new Error('MONGO_CONN is missing');
         }
 
-        await mongoose.connect(mongoUrl);
+        console.log('Attempting MongoDB connection...');
+
+        await mongoose.connect(mongoUrl, {
+            serverSelectionTimeoutMS: 15000
+        });
 
         console.log('MongoDB connected successfully');
 
     } catch (error) {
-        console.error('MongoDB connection failed:', error.message);
+        console.error('MongoDB connection failed:', error);
         throw error;
     }
 };
