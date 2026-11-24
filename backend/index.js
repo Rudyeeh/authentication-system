@@ -27,3 +27,8 @@ app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
     console.log(`http://localhost:${PORT}`);
 });
+
+console.log(
+  "MONGO_CONN exists:",
+  Boolean(process.env.MONGO_CONN)
+);
