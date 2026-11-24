@@ -40,7 +40,7 @@ function Home() {
     const fetchProducts = async () => {
         try {
             const response = await fetch(
-                'http://localhost:8080/products',
+                'https://authentication-system-gamma-one.vercel.app/products',
                 {
                     method: 'GET',
                     headers: {
