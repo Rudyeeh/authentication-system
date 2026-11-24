@@ -32,7 +32,7 @@ function Login({ setIsLoggedIn }) {
 
     try {
       const response = await fetch(
-        'https://authentication-system-gamma-one.vercel.app/auth/login',
+        'https://authentication-system-phi-six.vercel.app/auth/login',
         {
           method: 'POST',
           headers: {
