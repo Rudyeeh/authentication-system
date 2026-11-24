@@ -32,7 +32,7 @@ function Signup() {
     }
 
     try {
-      const url = 'https://authentication-system-gamma-one.vercel.app/auth/signup';
+      const url = 'https://authentication-system-phi-six.vercel.app/auth/signup';
 
       const response = await fetch(url, {
         method: 'POST',
